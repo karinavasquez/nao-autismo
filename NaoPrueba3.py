@@ -56,6 +56,7 @@ class ReactToTouch(ALModule):
         self.ledsProxy = ALProxy("ALLeds")
         self.videoRecorderProxy=  ALProxy("ALVideoRecorder")
         self.audioRecorderProxy = ALProxy("ALAudioRecorder")
+        self.checkRecorder = True
 
         # Subscribe to LeftBumperPressed event:
         global memory
@@ -207,7 +208,7 @@ class ReactToTouch(ALModule):
             counter = counter + 1
             if counter == 1:
                 checkIntroA  = True
-                #self.IntroA()
+                self.IntroA()
 
             elif counter == 2:
                 checkIntroA  = False
@@ -283,7 +284,9 @@ class ReactToTouch(ALModule):
 
      
     def IntroA(self):
-        self.recordVideoSound("Introduccion")       #EMPIEZA A GRABAR AUDIO Y VIDEO 
+        if self.checkRecorder           #atributo de la clase
+           self.recordVideoSound("Introduccion")       #EMPIEZA A GRABAR AUDIO Y VIDEO 
+           self.checkRecorder = False
 
         if checkIntroA == True:
            self.motionProxy.wakeUp()    #Despertar al robot agrega rigidez
@@ -336,10 +339,10 @@ class ReactToTouch(ALModule):
            self.audioRecorderProxy.stopMicrophonesRecording()
 
     def RespuestaAtencionA(self):
-        self.recordVideoSound("Saludo")       #EMPIEZA A GRABAR AUDIO Y VIDEO 
-        self.motionProxy.wakeUp()   #Despertar al robot agrega rigidez
-        self.moveHeadDown()
-        
+        self.recordVideoSound("Respuesta Atencion")       #EMPIEZA A GRABAR AUDIO Y VIDEO 
+        self.motionProxy.wakeUp()   #Despertar al robot agrega rigidez    
+        self.moveHeadDown()         #Posicion inicial de la cabeza
+
         #1 Mira a la derecha 
         if checkRespuestaA == True:
             self.turnHead()         #Funcion para que mire a la derecha y arriba
@@ -368,7 +371,7 @@ class ReactToTouch(ALModule):
 
     def armsUp(self):
         #Funcion en la que el robot sube sus brazos y le pide al nino que lo imite
-        self.recordVideoSound("Saludo")       #EMPIEZA A GRABAR AUDIO Y VIDEO 
+        self.recordVideoSound("Imitacion")       #EMPIEZA A GRABAR AUDIO Y VIDEO 
         self.motionProxy.wakeUp()
         for x in range(0,repetitions):
             if checkarmsUp == True:
@@ -448,7 +451,7 @@ class ReactToTouch(ALModule):
 
     def AnticipacionSocial(self):
         #Robot se tapa los ojos y pregunta donde esta el nino, luego los destapa y dice: "aqui esta"
-        self.recordVideoSound("Saludo")       #EMPIEZA A GRABAR AUDIO Y VIDEO 
+        self.recordVideoSound("Recibir")       #EMPIEZA A GRABAR AUDIO Y VIDEO 
 
         self.motionProxy.wakeUp()
         for x in range(0,repetitions):
@@ -739,10 +742,13 @@ class ReactToTouch(ALModule):
         strRecording = "/home/nao/recordings/tests/" + filename + ".wav"
 
         self.audioRecorderProxy.startMicrophonesRecording(strRecording,"wav", 16000,channels)
+       
         self.videoRecorderProxy.setCameraID(0)
         self.videoRecorderProxy.setFrameRate(10.0)
         self.videoRecorderProxy.setResolution(2)
         self.videoRecorderProxy.startRecording("/home/nao/recordings/tests", filename)
+        print "Video record started."
+
         
 
 def main(ip, port):
